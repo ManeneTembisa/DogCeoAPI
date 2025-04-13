@@ -3,6 +3,8 @@ name: Run Postman API Tests
 on:
   push:
     branches: [ main ]
+  schedule:
+    - cron: '0 6 * * 1-5'  # every weekday at 6 AM UTC
 
 jobs:
   test:
@@ -14,6 +16,10 @@ jobs:
       - name: Install Newman
         run: npm install -g newman
 
-      - name: Run Collection
+      - name: Run Collection & Generate HTML Report
         run: |
-          newman run collections/DogCeoAPI.postman_collection.json -e environments/DogCeo_Env.postman_environment.json
+          newman run collections/DogCeoAPI.postman_collection.json \
+          -e environments/DogCeo_Env.postman_environment.json \
+          -r cli,html \
+          --reporter-html-export newman/DogCeo_Report.html
+
